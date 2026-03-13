@@ -1,1 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krishna Reddy Kovvuri - Smart Card</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="importmap">
+    {
+      "imports": {
+        "react": "https://esm.sh/react@18.2.0",
+        "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+        "lucide-react": "https://esm.sh/lucide-react@0.263.1"
+      }
+    }
+  </script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-950">
+  <div id="root"></div>
+  <script type="text/babel" data-type="module">
+    import React, { useState, useEffect } from 'react';
+    import { createRoot } from 'react-dom/client';
+    import { 
+      Briefcase, 
+      GraduationCap, 
+      Award, 
+      ChevronRight, 
+      ExternalLink, 
+      Linkedin, 
+      Globe, 
+      Cpu, 
+      Lightbulb, 
+      TrendingUp, 
+      Users,
+      MapPin,
+      Code // Imported correctly from lucide-react
+    } from 'lucide-react';
 
+    // --- Reusable Components ---
+
+    const Section = ({ id, title, children, className = "" }) => (
+      <section id={id} className={`py-24 px-6 md:px-12 lg:px-24 ${className}`}>
+        <div className="max-w-6xl mx-auto">
+          {title && (
+            <div className="mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4">{title}</h2>
+              <div className="w-20 h-1 bg-indigo-500 rounded-full"></div>
+            </div>
+          )}
+          {children}
+        </div>
+      </section>
+    );
+
+    const TimelineItem = ({ role, company, location, period, description, isLast }) => (
+      <div className="relative pl-8 md:pl-0">
+        <div className="md:hidden absolute left-0 top-2 w-3 h-3 bg-indigo-500 rounded-full border-4 border-slate-900 z-10"></div>
+        {!isLast && <div className="md:hidden absolute left-1 top-5 w-0.5 h-full bg-slate-800"></div>}
+        
+        <div className="md:grid md:grid-cols-5 md:gap-8 items-start group">
+          <div className="hidden md:block col-span-1 text-right pt-1 relative">
+            <div className="text-sm font-semibold text-indigo-400">{period}</div>
+            <div className="text-xs text-slate-400 mt-1">{location}</div>
+            {/* Desktop Timeline Node */}
+            <div className="absolute right-[-2.5rem] top-2 w-4 h-4 bg-slate-900 border-2 border-indigo-500 rounded-full z-10 group-hover:bg-indigo-500 transition-colors duration-300"></div>
+          </div>
+          
+          <div className="md:col-span-4 bg-slate-800/50 hover:bg-slate-800 border border-slate-700/50 hover:border-indigo-500/30 rounded-2xl p-6 md:p-8 transition-all duration-300 group-hover:-translate-y-1">
+            <div className="md:hidden text-sm font-semibold text-indigo-400 mb-2">{period}</div>
+            <h3 className="text-xl md:text-2xl font-bold text-slate-100">{role}</h3>
+            <h4 className="text-lg text-slate-300 font-medium mb-4">{company} <span className="md:hidden text-sm text-slate-400 font-normal">| {location}</span></h4>
+            <p className="text-slate-400 leading-relaxed">{description}</p>
+          </div>
+        </div>
+      </div>
+    );
+
+    const SkillBadge = ({ icon: Icon, label }) => (
+      <div className="flex items-center gap-2 bg-slate-800/80 border border-slate-700 px-4 py-2 rounded-full text-slate-300 hover:text-indigo-400 hover:border-indigo-500/50 transition-all cursor-default">
+        <Icon size={16} />
+        <span className="text-sm font-medium">{label}</span>
+      </div>
+    );
+
+    // --- Main Application ---
+
+    function App() {
+      const [scrolled, setScrolled] = useState(false);
+
+      useEffect(() => {
+        const handleScroll = () => {
+          setScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+      }, []);
+
+      const scrollTo = (id) => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      };
+
+      return (
+        <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-indigo-500/30">
+          
+          {/* Navigation */}
+          <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-slate-950/80 backdrop-blur-md border-b border-slate-800 py-4' : 'bg-transparent py-6'}`}>
+            <div className="max-w-6xl mx-auto px-6 md:px-12 flex justify-between items-center">
+              <div className="text-xl font-bold tracking-tight text-white cursor-pointer" onClick={() => scrollTo('home')}>
+                krify<span className="text-indigo-500">.</span>
+              </div>
+              <div className="hidden md:flex gap-8 text-sm font-medium">
+                {['About', 'Experience', 'Education', 'Awards'].map((item) => (
+                  <button key={item} onClick={() => scrollTo(item.toLowerCase())} className="text-slate-400 hover:text-white transition-colors">
+                    {item}
+                  </button>
+                ))}
+              </div>
+              <a href="#contact" className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-full text-sm font-medium transition-colors">
+                Connect
+              </a>
+            </div>
+          </nav>
+
+          {/* Hero Section */}
+          <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 px-6 overflow-hidden">
+            {/* Abstract Background */}
+            <div className="absolute inset-0 z-0">
+              <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-[128px]"></div>
+              <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-[128px]"></div>
+            </div>
+
+            <div className="max-w-5xl mx-auto z-10 text-center flex flex-col items-center">
+              
+              {/* Profile Photo */}
+              <div className="mb-8 relative group">
+                {/* Glowing effect behind the image */}
+                <div className="absolute inset-0 bg-indigo-500 rounded-full blur-xl opacity-40 group-hover:opacity-60 transition-opacity duration-500"></div>
+                {/* Replace the src URL below with Krishna Reddy's actual photo URL */}
+                <img 
+                  src="https://pbs.twimg.com/profile_images/1306078628615135233/nn39K1vH_400x400.jpg" 
+                  alt="Krishna Reddy Kovvuri" 
+                  className="relative w-40 h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-slate-800 shadow-2xl z-10 transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800/50 border border-slate-700 text-indigo-400 text-sm font-medium mb-8">
+                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                Practitioner-Researcher & Leader
+              </div>
+              
+              <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight mb-6 leading-tight">
+                Krishna Reddy <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-blue-500">Kovvuri</span>
+              </h1>
+              
+              <p className="text-xl md:text-2xl text-slate-400 mb-10 max-w-3xl mx-auto font-light">
+                CEO at Krify | Tech Entrepreneur | AI Innovator
+              </p>
+              
+              <div className="flex flex-wrap items-center justify-center gap-4">
+                <button onClick={() => scrollTo('experience')} className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-full font-medium transition-all hover:gap-3">
+                  View Leadership Journey <ChevronRight size={18} />
+                </button>
+                <div className="flex gap-4">
+                  <a href="https://www.linkedin.com/in/krishnakovvuri" target="_blank" rel="noreferrer" className="p-4 rounded-full bg-slate-800/50 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 transition-colors">
+                    <Linkedin size={20} />
+                  </a>
+                  <a href="https://www.krify.com/" target="_blank" rel="noreferrer" className="p-4 rounded-full bg-slate-800/50 border border-slate-700 hover:border-indigo-500 hover:text-indigo-400 transition-colors">
+                    <Globe size={20} />
+                  </a>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* About & Skills Section */}
+          <Section id="about" title="Executive Summary" className="bg-slate-900/50 border-y border-slate-800/50">
+            <div className="grid md:grid-cols-2 gap-16 items-center">
+              <div>
+                <p className="text-lg text-slate-300 leading-relaxed mb-6">
+                  With nearly <strong className="text-white">20 years of IT industry experience</strong>, I lead a global team that drives digital transformation through innovative AI, Emerging Tech, Mobile, and Web applications. 
+                </p>
+                <p className="text-lg text-slate-300 leading-relaxed mb-6">
+                  My expertise lies in leveraging technology to solve complex business challenges and optimize operations. With a strong background in global delivery, outsourcing, and managing diverse client relationships, I've successfully delivered solutions across sectors like healthcare, finance, and education.
+                </p>
+                <p className="text-lg text-slate-300 leading-relaxed">
+                  I am passionate about fostering collaborative, high-performing teams that consistently deliver exceptional results.
+                </p>
+                
+                <div className="mt-8 flex items-center gap-4 text-slate-400">
+                  <MapPin size={20} className="text-indigo-500" />
+                  <span>Based in Andhra Pradesh, India</span>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                  <Lightbulb className="text-indigo-500" /> Core Strengths
+                </h3>
+                <div className="flex flex-wrap gap-3 mb-10">
+                  <SkillBadge icon={TrendingUp} label="Strategic Leadership" />
+                  <SkillBadge icon={Cpu} label="AI & Emerging Tech" />
+                  <SkillBadge icon={Globe} label="Global Delivery & Outsourcing" />
+                  <SkillBadge icon={Users} label="Team Leadership" />
+                  <SkillBadge icon={Code} label="Mobile & Web Innovation" />
+                  <SkillBadge icon={Briefcase} label="Client Relationship Mgmt" />
+                </div>
+
+                <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                  <Globe className="text-indigo-500" /> Languages
+                </h3>
+                <div className="flex gap-4">
+                  <div className="bg-slate-800 border border-slate-700 px-6 py-3 rounded-xl text-center flex-1">
+                    <div className="text-white font-semibold">English</div>
+                    <div className="text-sm text-slate-400">Professional</div>
+                  </div>
+                  <div className="bg-slate-800 border border-slate-700 px-6 py-3 rounded-xl text-center flex-1">
+                    <div className="text-white font-semibold">French</div>
+                    <div className="text-sm text-slate-400">Professional</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Section>
+
+          {/* Experience Section */}
+          <Section id="experience" title="Professional Journey">
+            <div className="relative">
+              {/* Desktop Timeline Line */}
+              <div className="hidden md:block absolute left-[19.5%] top-0 bottom-0 w-0.5 bg-slate-800"></div>
+              
+              <div className="space-y-12">
+                <TimelineItem 
+                  period="August 2011 - Present (14+ yrs)"
+                  role="Managing Director & CEO"
+                  company="Krify"
+                  location="Bangalore, India | US | UK"
+                  description="Leading a global IT enterprise. Driving Mobile App Strategy, Social Media Strategy, Strategic Consulting, Business Consulting, and Technology Consulting. Focused on Al and digital transformation to deliver scalable solutions."
+                  isLast={false}
+                />
+                
+                <TimelineItem 
+                  period="August 2009 - July 2011"
+                  role="Project Manager - Vision"
+                  company="Cohu Malaysia"
+                  location="Melaka, Malaysia"
+                  description="Spearheaded Multicultural Software Development Team Management. Led product management initiatives and oversaw complex customer support operations in a highly technical environment."
+                  isLast={false}
+                />
+
+                <TimelineItem 
+                  period="March 2008 - July 2009"
+                  role="Project Lead - Vision"
+                  company="Mindteck"
+                  location="La Chaux-de-fonds, Switzerland"
+                  description="Worked as a Project Lead managing cross-functional teams in Switzerland, ensuring timely delivery of vision-critical applications and bridging the gap between technical teams and stakeholders."
+                  isLast={false}
+                />
+
+                <TimelineItem 
+                  period="November 2006 - February 2008"
+                  role="Asst Project Manager - PDC Group"
+                  company="Applied Materials"
+                  location="Global"
+                  description="Managed the Applied Materials Process Diagnostics & Control tool. Responsible for Vision Application Management, ensuring high-quality outputs for global operations."
+                  isLast={false}
+                />
+
+                <TimelineItem 
+                  period="July 2004 - September 2006"
+                  role="Co-Founder & Director"
+                  company="Krify"
+                  location="Bangalore, India"
+                  description="Co-founded the company, setting the foundational vision, technical strategy, and operational frameworks that would eventually scale into a global enterprise."
+                  isLast={true}
+                />
+              </div>
+            </div>
+          </Section>
+
+          {/* Education & Awards Section (Grid) */}
+          <section id="education" className="py-24 px-6 md:px-12 lg:px-24 bg-slate-900/50 border-t border-slate-800/50">
+            <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16">
+              
+              {/* Education */}
+              <div>
+                <div className="mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4 flex items-center gap-3">
+                    <GraduationCap className="text-indigo-500" size={36} />
+                    Education
+                  </h2>
+                  <div className="w-20 h-1 bg-indigo-500 rounded-full"></div>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-indigo-500/50 transition-colors">
+                    <div className="text-indigo-400 text-sm font-semibold mb-1">Expected July 2025</div>
+                    <h3 className="text-xl font-bold text-white">Doctor of Philosophy - PhD</h3>
+                    <h4 className="text-slate-300 font-medium mb-2">Indian Institute of Management Visakhapatnam</h4>
+                    <p className="text-slate-400 text-sm">Focus: Entrepreneurship / Entrepreneurial Studies</p>
+                  </div>
+
+                  <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-indigo-500/50 transition-colors">
+                    <div className="text-indigo-400 text-sm font-semibold mb-1">July 2002 - May 2004</div>
+                    <h3 className="text-xl font-bold text-white">Master of Technology (M.Tech.)</h3>
+                    <h4 className="text-slate-300 font-medium mb-2">Andhra University</h4>
+                    <p className="text-slate-400 text-sm">Computer Science & Information Technology</p>
+                  </div>
+
+                  <div className="bg-slate-800/50 border border-slate-700 rounded-2xl p-6 hover:border-indigo-500/50 transition-colors">
+                    <div className="text-indigo-400 text-sm font-semibold mb-1">1998 - 2002</div>
+                    <h3 className="text-xl font-bold text-white">Bachelor of Technology (B.Tech.)</h3>
+                    <h4 className="text-slate-300 font-medium mb-2">GITAM Deemed University</h4>
+                    <p className="text-slate-400 text-sm">Computer Science and Engineering</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Awards */}
+              <div id="awards">
+                <div className="mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold text-slate-100 mb-4 flex items-center gap-3">
+                    <Award className="text-indigo-500" size={36} />
+                    Honors & Awards
+                  </h2>
+                  <div className="w-20 h-1 bg-indigo-500 rounded-full"></div>
+                </div>
+
+                <div className="grid gap-4">
+                  <div className="flex items-start gap-4 bg-slate-800/50 border border-slate-700 p-5 rounded-2xl hover:bg-slate-800 transition-colors">
+                    <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-lg">
+                      <Award size={24} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">BBC Radio Feature</h4>
+                      <p className="text-slate-400 text-sm mt-1">Krify's Mobile App was prominently featured and discussed on BBC Radio.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 bg-slate-800/50 border border-slate-700 p-5 rounded-2xl hover:bg-slate-800 transition-colors">
+                    <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-lg">
+                      <Award size={24} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">Chartered Engineer & FELLOW - IEI</h4>
+                      <p className="text-slate-400 text-sm mt-1">Recognized for exceptional engineering achievements and leadership.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 bg-slate-800/50 border border-slate-700 p-5 rounded-2xl hover:bg-slate-800 transition-colors">
+                    <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-lg">
+                      <Award size={24} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">ISO 9001:2008 Internal Auditor</h4>
+                      <p className="text-slate-400 text-sm mt-1">Certified for Quality Certification management and process optimization.</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4 bg-slate-800/50 border border-slate-700 p-5 rounded-2xl hover:bg-slate-800 transition-colors">
+                    <div className="p-3 bg-indigo-500/10 text-indigo-400 rounded-lg">
+                      <Award size={24} />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-bold text-white">INDIA TEAM of the Quarter</h4>
+                      <p className="text-slate-400 text-sm mt-1">Awarded for outstanding team leadership and project delivery excellence.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* Footer / CTA */}
+          <footer id="contact" className="relative py-24 px-6 overflow-hidden border-t border-slate-800 bg-slate-950">
+            <div className="absolute inset-0 z-0 opacity-20">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-2xl h-64 bg-indigo-600 rounded-full blur-[120px]"></div>
+            </div>
+            
+            <div className="max-w-4xl mx-auto text-center relative z-10">
+              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Let's achieve excellence together.</h2>
+              <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
+                Always open to discussing strategic digital transformation, AI innovations, and global tech partnerships.
+              </p>
+              
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                <a href="https://www.linkedin.com/in/krishnakovvuri" target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-full font-medium transition-all w-full sm:w-auto justify-center">
+                  <Linkedin size={20} /> Connect on LinkedIn
+                </a>
+                <a href="https://www.krify.com/" target="_blank" rel="noreferrer" className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 px-8 py-4 rounded-full font-medium transition-all w-full sm:w-auto justify-center">
+                  <Globe size={20} /> Visit Krify.com <ExternalLink size={16} />
+                </a>
+              </div>
+
+              <div className="text-slate-500 text-sm">
+                © {new Date().getFullYear()} Krishna Reddy Kovvuri. All rights reserved.
+              </div>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    // Mount the application
+    const root = createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
